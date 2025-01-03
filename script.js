@@ -1,38 +1,41 @@
 //your JS code here. If required.
-// Function that returns a promise that resolves with an array after 3 seconds
-function getArray() {
-  return new Promise(resolve => {
+// The initial array
+const numbers = [1, 2, 3, 4];
+
+// Function that returns a promise resolving with the array after 3 seconds
+function fetchNumbers() {
+  return new Promise((resolve) => {
     setTimeout(() => {
-      resolve([1, 2, 3, 4]);
-    }, 3000); // Resolves with [1, 2, 3, 4] after 3 seconds
+      resolve(numbers);
+    }, 3000);  // Resolve after 3 seconds
   });
 }
 
-// Function to update the output div with the array as text
-function updateOutput(array) {
-  const outputElement = document.getElementById('output');
-  outputElement.textContent = array.join(', ');
+// Function to filter even numbers
+function filterEvenNumbers(arr) {
+  return arr.filter((num) => num % 2 === 0);
 }
 
-// Start the promise chain
-getArray()
-  .then(array => {
-    // First promise: filter out odd numbers
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const evenNumbers = array.filter(num => num % 2 === 0);
-        updateOutput(evenNumbers); // Update output after filtering
-        resolve(evenNumbers); // Pass filtered array to next promise
-      }, 1000); // Wait for 1 second before resolving
-    });
+// Function to multiply numbers by 2
+function multiplyByTwo(arr) {
+  return arr.map((num) => num * 2);
+}
+
+// Start the promise chain when the script loads
+fetchNumbers()
+  .then((arr) => {
+    // First operation: filter out odd numbers
+    const evenNumbers = filterEvenNumbers(arr);
+    setTimeout(() => {
+      document.getElementById('output').textContent = `Even numbers: ${evenNumbers}`;
+    }, 1000); // Print after 1 second
+
+    // Second operation: multiply even numbers by 2
+    const multipliedNumbers = multiplyByTwo(evenNumbers);
+    setTimeout(() => {
+      document.getElementById('output').textContent = `After multiplying by 2: ${multipliedNumbers}`;
+    }, 2000); // Print after 2 seconds
   })
-  .then(evenNumbers => {
-    // Second promise: multiply each even number by 2
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const doubledNumbers = evenNumbers.map(num => num * 2);
-        updateOutput(doubledNumbers); // Update output after doubling
-        resolve(doubledNumbers); // Pass result to next promise (if needed)
-      }, 2000); // Wait for 2 seconds before resolving
-    });
+  .catch((error) => {
+    document.getElementById('output').textContent = `Error: ${error}`;
   });
